@@ -23,12 +23,12 @@ type userController struct {
 
 //NewUserController -> returns new user controller
 func NewUserController(s service.UserService) UserController {
-	return &userController{
+	return userController{
 		userService: s,
 	}
 }
 
-func (u *userController) GetAllUser(c *gin.Context) {
+func (u userController) GetAllUser(c *gin.Context) {
 	log.Print("[UserController]...get all Users")
 
 	users, err := u.userService.GetAll()
@@ -40,7 +40,7 @@ func (u *userController) GetAllUser(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": users})
 }
 
-func (u *userController) AddUser(c *gin.Context) {
+func (u userController) AddUser(c *gin.Context) {
 	log.Print("[UserController]...add User")
 	var user model.User
 	if err := c.ShouldBindJSON(&user); err != nil {
@@ -57,7 +57,7 @@ func (u *userController) AddUser(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": user})
 }
 
-func (u *userController) TransferMoney(c *gin.Context) {
+func (u userController) TransferMoney(c *gin.Context) {
 	log.Print("[UserController]...get all Users")
 
 	var txHandle *gorm.DB
