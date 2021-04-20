@@ -28,7 +28,7 @@ func SetupRoutes(db *gorm.DB) {
 	users.GET("/", userController.GetAllUser)
 	users.POST("/", userController.AddUser)
 
-	httpRouter.POST("/money-transfer", userController.TransferMoney)
+	httpRouter.POST("/money-transfer", userController.TransferMoney(db))
 	httpRouter.Run()
 
 }
