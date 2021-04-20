@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 // UserController : represent the user's controller contract
@@ -59,16 +60,34 @@ func (u *userController) AddUser(c *gin.Context) {
 func (u *userController) TransferMoney(c *gin.Context) {
 	log.Print("[UserController]...get all Users")
 
+	var txHandle *gorm.DB
+
+	defer func() {
+		if r := recover(); r != nil {
+			txHandle.Rollback()
+		}
+	}()
+
 	var moneyTransfer model.MoneyTransfer
 	if err := c.ShouldBindJSON(&moneyTransfer); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	err := u.userService.TransferMoney(moneyTransfer)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Error while Transfering money"})
+	if err := u.userService.WithTrx(txHandle).IncrementMoney(moneyTransfer.Receiver, moneyTransfer.Amount); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Error while incrementing money"})
+		txHandle.Rollback()
 		return
+	}
+
+	if err := u.userService.WithTrx(txHandle).DecrementMoney(moneyTransfer.Giver, moneyTransfer.Amount); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Error while decrementing money"})
+		txHandle.Rollback()
+		return
+	}
+
+	if err := txHandle.Commit().Error; err != nil {
+		log.Print("trx commit error: ", err)
 	}
 
 	c.JSON(http.StatusOK, gin.H{"msg": "Successfully Money Transferred"})
