@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"errors"
 	"golang-transaction/model"
 	"log"
 
@@ -64,6 +63,5 @@ func (u userRepository) IncrementMoney(receiver uint, amount float64) error {
 
 func (u userRepository) DecrementMoney(giver uint, amount float64) error {
 	log.Print("[UserRepository]...Decrement Money")
-	return errors.New("error occured")
-	// return u.DB.Model(&model.User{}).Where("id=?", giver).Update("wallet", gorm.Expr("wallet - ?", amount)).Error
+	return u.DB.Model(&model.User{}).Where("id=?", giver).Update("wallet", gorm.Expr("wallet - ?", amount)).Error
 }
