@@ -14,7 +14,7 @@ import (
 type UserController interface {
 	AddUser(*gin.Context)
 	GetAllUser(*gin.Context)
-	TransferMoney(*gorm.DB) gin.HandlerFunc
+	TransferMoney(*gin.Context)
 }
 
 type userController struct {
@@ -57,34 +57,32 @@ func (u userController) AddUser(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": user})
 }
 
-func (u userController) TransferMoney(db *gorm.DB) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		log.Print("[UserController]...get all Users")
+func (u userController) TransferMoney(c *gin.Context) {
+	log.Print("[UserController]...get all Users")
 
-		txHandle := c.MustGet("db_trx").(*gorm.DB)
+	txHandle := c.MustGet("db_trx").(*gorm.DB)
 
-		var moneyTransfer model.MoneyTransfer
-		if err := c.ShouldBindJSON(&moneyTransfer); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-			return
-		}
-
-		if err := u.userService.WithTrx(txHandle).IncrementMoney(moneyTransfer.Receiver, moneyTransfer.Amount); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Error while incrementing money"})
-			txHandle.Rollback()
-			return
-		}
-
-		if err := u.userService.WithTrx(txHandle).DecrementMoney(moneyTransfer.Giver, moneyTransfer.Amount); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Error while decrementing money"})
-			txHandle.Rollback()
-			return
-		}
-
-		if err := txHandle.Commit().Error; err != nil {
-			log.Print("trx commit error: ", err)
-		}
-
-		c.JSON(http.StatusOK, gin.H{"msg": "Successfully Money Transferred"})
+	var moneyTransfer model.MoneyTransfer
+	if err := c.ShouldBindJSON(&moneyTransfer); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
+
+	if err := u.userService.WithTrx(txHandle).IncrementMoney(moneyTransfer.Receiver, moneyTransfer.Amount); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Error while incrementing money"})
+		txHandle.Rollback()
+		return
+	}
+
+	if err := u.userService.WithTrx(txHandle).DecrementMoney(moneyTransfer.Giver, moneyTransfer.Amount); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Error while decrementing money"})
+		txHandle.Rollback()
+		return
+	}
+
+	if err := txHandle.Commit().Error; err != nil {
+		log.Print("trx commit error: ", err)
+	}
+
+	c.JSON(http.StatusOK, gin.H{"msg": "Successfully Money Transferred"})
 }
