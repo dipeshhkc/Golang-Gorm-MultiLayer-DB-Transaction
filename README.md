@@ -1,4 +1,4 @@
-# Implement Database Transactions in  Golang(Gin and GORM) Application
+# Implement Database Transactions in  Golang(Gin and GORM) Controller-Service-Repoitory Pattern Application
 
 In this project I will demonstrate how to implement DB Transaction in the Golang Gorm Project where Project is of Controller-Service-Repository Pattern.
 
