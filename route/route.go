@@ -2,6 +2,7 @@ package route
 
 import (
 	"golang-transaction/controller"
+	"golang-transaction/middleware"
 	"golang-transaction/repository"
 	"golang-transaction/service"
 	"log"
@@ -28,7 +29,7 @@ func SetupRoutes(db *gorm.DB) {
 	users.GET("/", userController.GetAllUser)
 	users.POST("/", userController.AddUser)
 
-	httpRouter.POST("/money-transfer", userController.TransferMoney(db))
+	httpRouter.POST("/money-transfer", middleware.DBTransactionMiddleware(db), userController.TransferMoney(db))
 	httpRouter.Run()
 
 }

@@ -61,13 +61,7 @@ func (u userController) TransferMoney(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		log.Print("[UserController]...get all Users")
 
-		txHandle := db.Begin()
-
-		defer func() {
-			if r := recover(); r != nil {
-				txHandle.Rollback()
-			}
-		}()
+		txHandle := c.MustGet("db_trx").(*gorm.DB)
 
 		var moneyTransfer model.MoneyTransfer
 		if err := c.ShouldBindJSON(&moneyTransfer); err != nil {
