@@ -3,6 +3,7 @@
 
 In this project I will demonstrate how to implement DB Transaction in the Golang Gorm Project where Project is of Controller-Service-Repository Pattern.
 
+Want to read detailed article about this? [Read here](https://articles.wesionary.team/implement-database-transactions-with-repository-pattern-golang-gin-and-gorm-application-907517fd0743)
 
 
 ![project-structure](https://user-images.githubusercontent.com/10809061/115715579-0211a780-a398-11eb-9b29-4b8a4794910d.jpg)
