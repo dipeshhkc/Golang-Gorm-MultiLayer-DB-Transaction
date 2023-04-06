@@ -8,3 +8,4 @@ Want to read detailed article about this? [Read here](https://articles.wesionary
 
 ![project-structure](https://user-images.githubusercontent.com/10809061/115715579-0211a780-a398-11eb-9b29-4b8a4794910d.jpg)
 ![example](https://user-images.githubusercontent.com/10809061/115719084-7b5ec980-a39b-11eb-9526-54e7ea50165b.jpg)
+![Transaction Flow Setup](https://miro.medium.com/v2/resize:fit:4800/format:webp/1*UMXLdvfuWg3Wn-lTCFfsMw.jpeg)
